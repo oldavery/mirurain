@@ -1,0 +1,21 @@
+name: Python checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ruff:
+    runs-on: kemonoforge-medium
+
+    steps:
+      - name: Checkout
+        uses: https://github.com/actions/checkout@v4
+
+      - name: Ruff lint
+        uses: https://github.com/astral-sh/ruff-action@v4.1.0
+
+      - name: Ruff format
+        uses: https://github.com/astral-sh/ruff-action@v4.1.0
+        with:
+          args: "format --check --diff"

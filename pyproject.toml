@@ -1,0 +1,72 @@
+[build-system]
+build-backend = "uv_build"
+requires = [ "uv_build>=0.9.18,<0.10.0" ]
+
+[dependency-groups]
+dev = [
+ "basedpyright>=1.40.2",
+ "poethepoet>=0.49.0",
+ "pyright>=1.1.409",
+ "ruff>=0.15.13",
+]
+
+[project]
+dependencies = [ "aiohttp==3.14.5", "asyncmy==0.2.18", "asyncodbc==0.1.1", "asyncpg==0.32.0", "asyncstdlib==3.14.0", "humanfriendly==10.0", "loguru==0.8.0", "nostr-sdk==0.45.2", "pydantic==2.14.4", "pydantic-settings==2.16.3", "python-dotenv==1.2.4", "rbloom==1.5.4", "stoat-py[speed]==1.2.1", "tortoise-orm[accel]==1.1.9" ]
+description = "A tiny Stoat bot to bring social media feeds to your communities!"
+keywords = [ "mirurain", "stoat.chat", "aggregator", "stoat.py", "microservice" ]
+license = "AGPL-3.0-or-later"
+name = "Mirurain"
+requires-python = ">=3.14"
+version = "2026.11.26a"
+
+[[project.authors]]
+name = "Avery"
+email = "avery@kemonomimi.moe"
+
+[project.readme]
+content-type = "text/markdown"
+file = "README.md"
+
+[project.scripts]
+mirurain = "mirurain:entrypoint"
+
+[project.urls]
+issues = "https://forge.kemonomimi.moe/avery/mirurain/issues"
+repository = "https://forge.kemonomimi.moe/avery/mirurain.git"
+
+[tool.pyright]
+exclude = [ "**/node_modules", "**/__pycache__", "**/.venv", "**/migrations" ]
+include = [ "src" ]
+pythonVersion = "3.15"
+reportMissingTypeStubs = "none"
+reportUnknownArgumentType = "none"
+reportUnknownMemberType = "none"
+reportUnknownParameterType = "none"
+reportUnknownVariableType = "none"
+reportUnusedFunction = "none"
+typeCheckingMode = "strict"
+
+[tool.poe.tasks]
+format = "ruff format . --color never"
+
+[[tool.poe.tasks.lint.sequence]]
+cmd = "ruff check . --fix"
+
+[[tool.poe.tasks.lint.sequence]]
+cmd = "basedpyright ."
+
+[tool.ruff]
+preview = true
+
+[tool.ruff.lint]
+ignore = [ "E501" ]
+select = [ "A", "SIM", "PTH", "RUF", "E", "F", "I", "B", "UP", "D", "DOC", "S" ]
+
+[tool.ruff.lint.per-file-ignores]
+"src/mirurain/migrations/**" = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.tortoise]
+tortoise_orm = "mirurain.utilities.database.TORTOISE_ORM"

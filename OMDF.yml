@@ -1,0 +1,28 @@
+# Open Mirror Definition File
+# ---------------------------
+# Higher equals better
+#
+# View the specification and its Python type definitions here:
+# https://forge.kemonomimi.moe/avery/omdf
+
+mirrors:
+  github.com:
+    source: https://github.com/averypaws/mirurain
+    weight: 40
+    writable: false
+
+  codeberg.org:
+    source: https://codeberg.org/avery/mirurain
+    weight: 30
+    writable: false
+
+  git.gay:
+    source: https://git.gay/avery/mirurain
+    weight: 20
+    writable: false
+
+  forge.kemonomimi.moe:
+    source: https://forge.kemonomimi.moe/avery/mirurain
+    weight: 10
+    canonical: true
+    writable: true
