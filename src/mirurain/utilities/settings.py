@@ -24,6 +24,9 @@ class Fanner(BaseModel):
 
     Attributes:
         workers: Number of fan-out workers to run. Defaults to 3.
+        sleep: Delay in seconds between fan-out poll cycles. Defaults to 5.
+        max_retries: Maximum retry attempts before marking an entry as failed.
+            Defaults to 3.
     """
 
     workers: int = 3

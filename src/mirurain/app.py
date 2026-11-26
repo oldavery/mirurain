@@ -36,7 +36,7 @@ def main() -> None:
         logger.info("completed registering gears")
 
         end = time()
-        logger.info(f"intialised in {(end - start) * 1000:.2f}ms")
+        logger.info(f"initialised in {(end - start) * 1000:.2f}ms")
 
     logger.info(f"starting mirurain v{version('mirurain')}")
     bot.run(settings.stoat.api_key)

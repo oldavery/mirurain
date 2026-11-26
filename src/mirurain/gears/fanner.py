@@ -34,7 +34,7 @@ class FannerGear(commands.Gear):
         """Initialise the fan-out gear.
 
         Args:
-            bot (MirurainBot): Bot instance that owns the gear.
+            bot: Bot instance that owns the gear.
         """
         super().__init__()
         self.bot = bot
@@ -43,17 +43,23 @@ class FannerGear(commands.Gear):
     async def _queue_get(
         self, amount: int, lease: int = 300
     ) -> list[NotificationQueue]:
-        """Retrieve one or more notifications from the queue.
+        """Retrieve queued notifications up to the specified amount.
+
+        Picks the oldest entries in QUEUED, RETRYING, or expired-lease
+        PROCESSING states and marks them PROCESSING with a claim token.
 
         Args:
-            amount (int): The maximum number of notifications to claim.
-            lease (int, optional): Lease duration in seconds. Defaults to 300.
+            amount: Maximum notifications to claim.
+            lease: Lease duration in seconds before expired leases become
+                reclaimable. Defaults to 300.
 
         Returns:
-            list[NotificationQueue]: Claimed notification records.
+            The claimed notification records, ordered by creation time.
 
         Raises:
-            ValueError: If amount or lease is less than 1.
+            ValueError: If *amount* or *lease* is less than 1.
+            asyncio.CancelledError: If the database connection is closing.
+            Exception: For other unexpected database errors.
         """
         if amount < 1:
             raise ValueError("amount must be >= 1")
@@ -121,8 +127,8 @@ class FannerGear(commands.Gear):
         """Mark a claimed queue entry as completed.
 
         Args:
-            queue_id (int): Queue entry identifier.
-            token (str): Claim token for the lease.
+            queue_id: Queue entry identifier.
+            token: Claim token for the lease.
 
         Returns:
             bool: True if the queue entry was updated.
@@ -142,8 +148,8 @@ class FannerGear(commands.Gear):
         """Mark a claimed queue entry for retry.
 
         Args:
-            queue_id (int): Queue entry identifier.
-            token (str): Claim token for the lease.
+            queue_id: Queue entry identifier.
+            token: Claim token for the lease.
 
         Returns:
             bool: True if the queue entry was updated.
@@ -163,8 +169,8 @@ class FannerGear(commands.Gear):
         """Mark a claimed queue entry as failed.
 
         Args:
-            queue_id (int): Queue entry identifier.
-            token (str): Claim token for the lease.
+            queue_id: Queue entry identifier.
+            token: Claim token for the lease.
 
         Returns:
             bool: True if the queue entry was updated.
@@ -184,8 +190,8 @@ class FannerGear(commands.Gear):
         """Refresh the lease on a claimed queue entry.
 
         Args:
-            queue_id (int): Queue entry identifier.
-            token (str): Claim token for the lease.
+            queue_id: Queue entry identifier.
+            token: Claim token for the lease.
 
         Returns:
             bool: True if the queue entry was updated.
@@ -202,7 +208,7 @@ class FannerGear(commands.Gear):
         """Process a single queued notification.
 
         Args:
-            notification (NotificationQueue): Queue entry to process.
+            notification: Queue entry to process.
         """
         token = notification.claim_token
         assert token is not None
@@ -239,7 +245,7 @@ class FannerGear(commands.Gear):
 
         if not isinstance(
             channel, (GroupChannel, TextChannel, VoiceChannel)
-        ):  # TODO (Avery): Find possible paths to avoid hardcoding channels to reduce maintaince
+        ):  # TODO (Avery): Find possible paths to avoid hardcoding channels to reduce maintenance
             logger.warning(f"{notification.id} failed due to incompatible channel type")
             await self._mark_failed(notification.id, token)
             return
@@ -283,6 +289,7 @@ class FannerGear(commands.Gear):
         logger.info(f"{notification.id} processed")
 
     async def _fan_loop(self) -> None:
+        """Background loop that polls the queue and dispatches notifications."""
         while not self.bot.closed:
             await asyncio.sleep(settings.fanner.sleep)
 

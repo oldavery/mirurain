@@ -23,7 +23,7 @@ class StatusGear(commands.Gear):
         """Initialise the status gear.
 
         Args:
-            bot (MirurainBot): Bot instance that owns the gear.
+            bot: Bot instance that owns the gear.
         """
         super().__init__()
         self.bot = bot

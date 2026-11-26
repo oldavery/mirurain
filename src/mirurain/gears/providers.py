@@ -89,6 +89,7 @@ class ProviderGear(commands.Gear):
             await self._run_task(p.platform, p.run)
 
     async def _collect(self) -> None:
+        """Bulk-create pending notifications in the database queue."""
         notifications = []
 
         while True:
